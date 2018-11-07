@@ -18,8 +18,8 @@ dependencies {
     compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '7.1.1.jre8-preview'
     compile group: 'org.freemarker', name: 'freemarker', version: '2.3.28'
     compile group: 'org.sql2o', name: 'sql2o', version: '1.5.4'
-    compile group: 'org.apache.poi', name : 'poi', version: '4.0.0'
-    compile(group: 'org.apache.poi', name : 'poi-ooxml', version: '4.0.0') {
+    compile group: 'org.apache.poi', name : 'poi', version: '3.17'
+    compile(group: 'org.apache.poi', name : 'poi-ooxml', version: '3.17') {
         exclude group: 'stax', module: 'stax-api'
     }
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.7.1'
