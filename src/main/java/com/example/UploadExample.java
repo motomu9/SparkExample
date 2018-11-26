@@ -1,12 +1,11 @@
 package com.example;
 
-import spark.Request;
+import com.example.enums.UploadFileType;
+import com.example.logic.UploadExcelController;
 
 import javax.servlet.MultipartConfigElement;
-import javax.servlet.ServletException;
 import javax.servlet.http.Part;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,51 +15,80 @@ import static spark.Spark.*;
 
 public class UploadExample {
 
-    public static void main(String[] args) {
+  public static void main(String[] args) {
 
-        port(8081);
+    port(8081);
 
-        File uploadDir = new File("upload");
-        uploadDir.mkdir(); // create the upload directory if it doesn't exist
+    File uploadDir = new File("upload");
+    uploadDir.mkdir(); // create the upload directory if it doesn't exist
 
-        staticFiles.externalLocation("upload");
+    staticFiles.externalLocation("upload");
+    staticFiles.location("/WebContents");
 
-        get("/", (req, res) ->
-                "<form method='post' enctype='multipart/form-data'>" // note the enctype
-                        + "    <input type='file' name='uploaded_file' accept='.xlsx'>" // make sure to call getPart using the same "name" in the post
-                        + "    <button>Upload picture</button>"
-                        + "</form>"
-        );
+    get(
+        "/",
+        (req, res) ->
+            "<!DOCTYPE html>"
+                + "<html>"
+                + ""
+                + "<head>"
+                + "    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>"
+                + "    <title>Hello World</title>"
+                + "    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
+                + "    <script src='./html/js/customAjax.js' type='text/javascript'></script>"
+                + "</head>"
+                + ""
+                + "<body>"
+                + "    <form> <input type='file' name='Master_File1' accept='.xlsx'> <button type='button' id='bt_Master_File1'>UploadExcelController</button> </form> "
+                + "    Result: <span id='result_Master_File1'></span>"
+                + "    <form> <input type='file' name='Master_File2' accept='.xlsx'> <button type='button' id='bt_Master_File2'>UploadExcelController</button> </form>"
+                + "    <p> Result: <span id='result_Master_File2'></span> </p>"
+                + "    <form> <input type='file' name='Master_File3' accept='.xlsx'> <button type='button' id='bt_Master_File3'>UploadExcelController</button> </form>"
+                + "    <p> Result: <span id='result_Master_File3'></span> </p>"
+                + "    <form> <input type='file' name='Tran_File1' accept='.xlsx'> <button type='button' id='bt_Tran_File1'>UploadExcelController</button> </form>"
+                + "    <p> Result: <span id='result_Tran_File1'></span> </p>"
+                + "    <form> <input type='file' name='Tran_File2' accept='.xlsx'> <button type='button' id='bt_Tran_File2'>UploadExcelController</button> </form>"
+                + "    <p> Result: <span id='result_Tran_File2'></span> </p>"
+                + "</body>"
+                + ""
+                + "</html>");
 
-        post("/", (req, res) -> {
+    post(
+        "/fileUpload",
+        (req, res) -> {
+          Path tempFile = Files.createTempFile(uploadDir.toPath(), "", "");
 
-            Path tempFile = Files.createTempFile(uploadDir.toPath(), "", "");
+          req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
 
-            req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
+          Part part = null;
+          UploadFileType fileType = null;
 
-            try (InputStream input = req.raw().getPart("uploaded_file").getInputStream()) { // getPart needs to use same "name" as input field in form
-                Files.copy(input, tempFile, StandardCopyOption.REPLACE_EXISTING);
-            }
+          for (UploadFileType type : UploadFileType.values()) {
+              if (req.raw().getPart(type.name()) != null) {
+                  part = req.raw().getPart(type.name());
+                  fileType = type;
+                  break;
+              }
+          }
 
-            logInfo(req, tempFile);
-            return "<h1>You uploaded this image:<h1><img src='" + tempFile.getFileName() + "'>";
+          try (InputStream input =
+              part.getInputStream()) { // getPart needs to use same "name" as input field in form
+            Files.copy(input, tempFile, StandardCopyOption.REPLACE_EXISTING);
+          }
 
+          new UploadExcelController()
+              .importExcelFile(fileType, tempFile.toAbsolutePath().toString());
+
+          return fileType + "Processing";
         });
+  }
 
+  private static String getFileName(Part part) {
+    for (String cd : part.getHeader("content-disposition").split(";")) {
+      if (cd.trim().startsWith("filename")) {
+        return cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
+      }
     }
-
-    // methods used for logging
-    private static void logInfo(Request req, Path tempFile) throws IOException, ServletException {
-        System.out.println("Uploaded file '" + getFileName(req.raw().getPart("uploaded_file")) + "' saved as '" + tempFile.toAbsolutePath() + "'");
-    }
-
-    private static String getFileName(Part part) {
-        for (String cd : part.getHeader("content-disposition").split(";")) {
-            if (cd.trim().startsWith("filename")) {
-                return cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
-            }
-        }
-        return null;
-    }
-
+    return null;
+  }
 }
