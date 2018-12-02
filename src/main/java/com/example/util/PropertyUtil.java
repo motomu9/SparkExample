@@ -11,7 +11,7 @@ public class PropertyUtil {
     private static final String INIT_FILE_PATH = "./src/common.properties";
     private static final Properties properties;
 
-    private PropertyUtil() throws Exception {
+    private PropertyUtil() {
     }
 
     static {

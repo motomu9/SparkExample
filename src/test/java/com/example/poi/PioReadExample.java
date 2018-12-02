@@ -9,7 +9,7 @@ import java.io.IOException;
 public class PioReadExample {
     public static void main(String... args) throws IOException, InvalidFormatException {
 
-        File file = new File("D:\\Dev\\SparkExample\\src\\main\\resources\\POI\\Sample.xlsx");
+        File file = new File("./src/main/resources/POI/Sample.xlsx");
         Workbook workbook = WorkbookFactory.create(file);
 
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {

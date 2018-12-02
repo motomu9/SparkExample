@@ -8,8 +8,11 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.SortedTable;
 import org.dbunit.dataset.excel.XlsDataSet;
 import org.dbunit.dataset.excel.XlsDataSetWriter;
+import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -130,4 +133,27 @@ public abstract class UseDBTestBase {
             e.printStackTrace();
         }
     }
+
+    public void compareExcel() throws IOException, DataSetException, SQLException {
+        String[] sort = {"カラム名1", "カラム名2"};
+        String[] exclude = {"カラム名3"};
+
+        FileInputStream fis = new FileInputStream("insert.xlsx");
+        IDataSet expectDataSet = new XlsDataSet(fis);
+        ITable expect = expectDataSet.getTable("insert.xlsxのシート名");
+
+        // 比較対象外のカラム設定
+        expect = DefaultColumnFilter.excludedColumnsTable(expect, exclude);
+        // 指定したカラムでソート
+        expect = new SortedTable(expect, sort);
+        IDataSet dataSet = dbconn.createDataSet();
+        ITable actual = dataSet.getTable("シート名");
+
+        // 比較対象外のカラム設定
+        actual = DefaultColumnFilter.excludedColumnsTable(actual, exclude);
+        // 指定したカラムでソート
+        actual = new SortedTable(actual, sort);
+        // 検証 Assertion.assertEquals(actual,expect);
+    }
+
 }

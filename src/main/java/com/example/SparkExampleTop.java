@@ -20,12 +20,12 @@ public class SparkExampleTop {
         final Configuration configuration = new Configuration(new Version(2, 3, 0));
         configuration.setClassForTemplateLoading(SparkExampleTop.class, "/");
 
-        Spark.get("/", (request, response) -> {
+        Spark.get("/testa", (request, response) -> {
 
             StringWriter writer = new StringWriter();
 
             try {
-                Template formTemplate = configuration.getTemplate("templates/form.ftl");
+                freemarker.template.Template formTemplate = configuration.getTemplate("templates/form.ftl");
 
                 formTemplate.process(null, writer);
             } catch (Exception e) {
@@ -55,5 +55,7 @@ public class SparkExampleTop {
 
             return writer;
         });
+        Spark.get("/TabText", (request, response) -> TextProp.prop());
+
     }
 }
