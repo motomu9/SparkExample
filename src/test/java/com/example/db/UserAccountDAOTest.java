@@ -30,4 +30,21 @@ class UserAccountDAOTest extends UseDBTestBase {
         assertEquals(new UserAccountDAO().getAll().size(), 2);
     }
 
+  @Test
+  void getPassword() {
+        String pw = new UserAccountDAO().getPassword("abc");
+        assertEquals("def",pw);
+  }
+
+  @Test
+  void getUserData() {
+      UserAccount dto = new UserAccountDAO().getUserData("abc");
+      assertEquals("abc",dto.getIntraAccount());
+      assertEquals("def",dto.getPassword());
+      assertEquals("0",dto.getDeleteFlag());
+
+  }
+
+  @Test
+  void insertUserData() {}
 }

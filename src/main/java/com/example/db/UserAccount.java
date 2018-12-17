@@ -3,41 +3,51 @@ package com.example.db;
 import java.io.Serializable;
 
 public class UserAccount implements Serializable {
-    public static final long serialVersionUID = 1L;
+  public static final long serialVersionUID = 1L;
 
-    private String intraAccount;
-    private char deleteFlag;
+  private String intraAccount;
 
-    public UserAccount() {
-    }
+  private String password;
+  private String deleteFlag;
 
-    public String getIntraAccount() {
-        return intraAccount;
-    }
+  public UserAccount() {}
 
-    public void setIntraAccount(String intraAccount) {
-        this.intraAccount = intraAccount;
-    }
+  public String getIntraAccount() {
+    return intraAccount;
+  }
 
-    public char getDeleteFlag() {
-        return deleteFlag;
-    }
+  public void setIntraAccount(String intraAccount) {
+    this.intraAccount = intraAccount;
+  }
 
-    public void setDeleteFlag(char deleteFlag) {
-        this.deleteFlag = deleteFlag;
-    }
+  public String getDeleteFlag() {
+    return deleteFlag;
+  }
 
-    public UserAccount(String intraAccount, char deleteFlag) {
-        this.intraAccount = intraAccount;
-        this.deleteFlag = deleteFlag;
-    }
+  public void setDeleteFlag(String deleteFlag) {
+    this.deleteFlag = deleteFlag;
+  }
 
-    @Override
-    public String toString() {
-        return "UserAccount{" +
-                "intraAccount='" + intraAccount + '\'' +
-                ", deleteFlag=" + deleteFlag +
-                '}';
-    }
+  public String getPassword() {
+    return password;
+  }
 
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public UserAccount(String intraAccount,String password, String deleteFlag) {
+    this.intraAccount = intraAccount;
+    this.password = password;
+    this.deleteFlag = deleteFlag;
+  }
+
+  @Override
+  public String toString() {
+    return "UserAccount{" +
+            "intraAccount='" + intraAccount + '\'' +
+            ", password='" + password + '\'' +
+            ", deleteFlag='" + deleteFlag + '\'' +
+            '}';
+  }
 }
